@@ -134,7 +134,10 @@ if st.session_state.show_similar_cases:
         "Case Year Range",
         int(df_rel_cases.source_year.min()),
         int(df_rel_cases.source_year.max()),
-        (2017, 2024),
+        (
+            int(df_rel_cases.source_year.min()),
+            int(df_rel_cases.source_year.max()),
+        ),
     )
     outcome_filter = st.multiselect(
         "Outcome",
