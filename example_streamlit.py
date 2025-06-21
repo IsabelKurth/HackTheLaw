@@ -187,55 +187,51 @@ if st.session_state.show_similar_cases:
                     key=f"claim_Jurisdiction_{idx}",
                     disabled=True,
                 )
-                # Only show the donut plot below the first text box
-                if idx == jurisdiction_claims.index[0]:
-                    # Assume the relevant column in df is 'jurisdiction' and values are 'N/A', 'No', 'Yes'
-                    # Group by 'judgment' and aggregate case ids and titles
-                    grouped = (
-                        df_arg_rel.groupby("judgment")
-                        .agg(
-                            Count=("judgment", "size"),
-                            CaseIDs=(
-                                "case_identifier",
-                                lambda x: ", ".join(map(str, x)),
-                            ),
-                            Titles=("case_title", lambda x: "; ".join(map(str, x))),
-                        )
-                        .reindex(["N/A", "No", "Yes"], fill_value=0)
-                        .reset_index()
-                        .rename(columns={"judgment": "Jurisdiction"})
+                # Show the donut plot below each text box for every row in jurisdiction_claims
+                grouped = (
+                    df_arg_rel.groupby("judgment")
+                    .agg(
+                        Count=("judgment", "size"),
+                        CaseIDs=(
+                            "case_identifier",
+                            lambda x: ", ".join(map(str, x)),
+                        ),
+                        Titles=("case_title", lambda x: "; ".join(map(str, x))),
                     )
+                    .reindex(["N/A", "No", "Yes"], fill_value=0)
+                    .reset_index()
+                    .rename(columns={"judgment": "Jurisdiction"})
+                )
 
-                    # Create a single horizontal bar with segments for Yes, No, N/A
-                    bar_data = grouped.copy()
-                    bar_data["x0"] = bar_data["Count"].cumsum().shift(fill_value=0)
-                    bar_data["x1"] = bar_data["Count"].cumsum()
+                bar_data = grouped.copy()
+                bar_data["x0"] = bar_data["Count"].cumsum().shift(fill_value=0)
+                bar_data["x1"] = bar_data["Count"].cumsum()
 
-                    bar_chart = (
-                        alt.Chart(bar_data)
-                        .mark_bar(height=30)
-                        .encode(
-                            x=alt.X("x0:Q", axis=None),
-                            x2="x1:Q",
-                            color=alt.Color(
-                                "Jurisdiction:N",
-                                scale=alt.Scale(
-                                    domain=["Yes", "No", "N/A"],
-                                    range=["#4caf50", "#f44336", "#bdbdbd"],
-                                ),
-                                legend=None,
+                bar_chart = (
+                    alt.Chart(bar_data)
+                    .mark_bar(height=30)
+                    .encode(
+                        x=alt.X("x0:Q", axis=None),
+                        x2="x1:Q",
+                        color=alt.Color(
+                            "Jurisdiction:N",
+                            scale=alt.Scale(
+                                domain=["Yes", "No", "N/A"],
+                                range=["#4caf50", "#f44336", "#bdbdbd"],
                             ),
-                            tooltip=[
-                                alt.Tooltip("Jurisdiction:N", title="Jurisdiction"),
-                                alt.Tooltip("Count:Q", title="Count"),
-                                alt.Tooltip("CaseIDs:N", title="Case IDs"),
-                                alt.Tooltip("Titles:N", title="Titles"),
-                            ],
-                        )
-                        .properties(width=240, height=30)
+                            legend=None,
+                        ),
+                        tooltip=[
+                            alt.Tooltip("Jurisdiction:N", title="Jurisdiction"),
+                            alt.Tooltip("Count:Q", title="Count"),
+                            alt.Tooltip("CaseIDs:N", title="Case IDs"),
+                            alt.Tooltip("Titles:N", title="Titles"),
+                        ],
                     )
+                    .properties(width=240, height=30)
+                )
 
-                    st.altair_chart(bar_chart, use_container_width=False)
+                st.altair_chart(bar_chart, use_container_width=False)
 
         # Admissibility section
         with col2:
@@ -254,6 +250,52 @@ if st.session_state.show_similar_cases:
                     disabled=True,
                 )
 
+                ### Needs to be adapted when the correct data is available
+                grouped = (
+                    df_arg_rel.groupby("judgment")
+                    .agg(
+                        Count=("judgment", "size"),
+                        CaseIDs=(
+                            "case_identifier",
+                            lambda x: ", ".join(map(str, x)),
+                        ),
+                        Titles=("case_title", lambda x: "; ".join(map(str, x))),
+                    )
+                    .reindex(["N/A", "No", "Yes"], fill_value=0)
+                    .reset_index()
+                    .rename(columns={"judgment": "Jurisdiction"})
+                )
+
+                bar_data = grouped.copy()
+                bar_data["x0"] = bar_data["Count"].cumsum().shift(fill_value=0)
+                bar_data["x1"] = bar_data["Count"].cumsum()
+
+                bar_chart = (
+                    alt.Chart(bar_data)
+                    .mark_bar(height=30)
+                    .encode(
+                        x=alt.X("x0:Q", axis=None),
+                        x2="x1:Q",
+                        color=alt.Color(
+                            "Jurisdiction:N",
+                            scale=alt.Scale(
+                                domain=["Yes", "No", "N/A"],
+                                range=["#4caf50", "#f44336", "#bdbdbd"],
+                            ),
+                            legend=None,
+                        ),
+                        tooltip=[
+                            alt.Tooltip("Jurisdiction:N", title="Jurisdiction"),
+                            alt.Tooltip("Count:Q", title="Count"),
+                            alt.Tooltip("CaseIDs:N", title="Case IDs"),
+                            alt.Tooltip("Titles:N", title="Titles"),
+                        ],
+                    )
+                    .properties(width=240, height=30)
+                )
+
+                st.altair_chart(bar_chart, use_container_width=False)
+
         # Merits section
         with col3:
             st.markdown("### ⭐ Merits")
@@ -270,6 +312,51 @@ if st.session_state.show_similar_cases:
                     key=f"claim_Merits_{idx}",
                     disabled=True,
                 )
+
+                grouped = (
+                    df_arg_rel.groupby("judgment")
+                    .agg(
+                        Count=("judgment", "size"),
+                        CaseIDs=(
+                            "case_identifier",
+                            lambda x: ", ".join(map(str, x)),
+                        ),
+                        Titles=("case_title", lambda x: "; ".join(map(str, x))),
+                    )
+                    .reindex(["N/A", "No", "Yes"], fill_value=0)
+                    .reset_index()
+                    .rename(columns={"judgment": "Jurisdiction"})
+                )
+
+                bar_data = grouped.copy()
+                bar_data["x0"] = bar_data["Count"].cumsum().shift(fill_value=0)
+                bar_data["x1"] = bar_data["Count"].cumsum()
+
+                bar_chart = (
+                    alt.Chart(bar_data)
+                    .mark_bar(height=30)
+                    .encode(
+                        x=alt.X("x0:Q", axis=None),
+                        x2="x1:Q",
+                        color=alt.Color(
+                            "Jurisdiction:N",
+                            scale=alt.Scale(
+                                domain=["Yes", "No", "N/A"],
+                                range=["#4caf50", "#f44336", "#bdbdbd"],
+                            ),
+                            legend=None,
+                        ),
+                        tooltip=[
+                            alt.Tooltip("Jurisdiction:N", title="Jurisdiction"),
+                            alt.Tooltip("Count:Q", title="Count"),
+                            alt.Tooltip("CaseIDs:N", title="Case IDs"),
+                            alt.Tooltip("Titles:N", title="Titles"),
+                        ],
+                    )
+                    .properties(width=240, height=30)
+                )
+
+                st.altair_chart(bar_chart, use_container_width=False)
 
         st.markdown("---")
         st.subheader("💡 Improve strategy")
